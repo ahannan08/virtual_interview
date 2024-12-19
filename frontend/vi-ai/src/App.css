@@ -1,0 +1,39 @@
+.app {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 20px;
+}
+
+.selection {
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-width: 400px;
+  background-color: #f9f9f9;
+}
+
+.selection label {
+  display: block;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.selection input[type="radio"] {
+  margin-right: 10px;
+}
+
+.selection button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.selection button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
