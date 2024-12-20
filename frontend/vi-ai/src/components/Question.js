@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/question.css'; // Import CSS file
+import '../styles/question.css';
+import Speech from './Speech';
 
 const Question = ({
   question,
@@ -11,17 +12,13 @@ const Question = ({
   onNext,
   currentQuestionIndex,
   maxQuestions,
-  startSpeechRecognition,
-  isListening,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Show loading state for 3 seconds when component mounts
     setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-      // Only speak the question after loading is complete
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(question.question);
         speechSynthesis.speak(utterance);
@@ -70,28 +67,17 @@ const Question = ({
               <p className="mb-2">{feedback}</p>
               <p className="font-semibold">Score: {score}</p>
             </div>
-            
             <button
-              className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+              className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
               onClick={onNext}
             >
-              {currentQuestionIndex < maxQuestions - 1 ? 'Next Question' : 'Submit and End'}
+              Next Question
             </button>
           </div>
         )}
-      </div>
 
-      <button 
-        className={`mt-6 px-6 py-2 rounded-lg transition-colors ${
-          isListening 
-            ? 'bg-green-500 text-white' 
-            : 'bg-yellow-500 text-white hover:bg-yellow-600'
-        }`}
-        onClick={startSpeechRecognition}
-        disabled={isListening}
-      >
-        {isListening ? '🎤 Listening... Speak now' : '🎤 Start Speaking'}
-      </button>
+        <Speech setUserResponse={setUserResponse} />
+      </div>
     </div>
   );
 };

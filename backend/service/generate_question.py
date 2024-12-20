@@ -5,7 +5,7 @@ role_concepts = {
     "frontend": ["React", "Redux", "JSX", "CSS Flexbox", "Virtual DOM"],
     "backend": ["Node.js", "Express.js", "REST APIs", "Database Design", "Authentication"],
     "fullstack": ["React", "Node.js", "Microservices", "API Integration", "Database Scaling"],
-    "ai_engineer": ["Neural Networks", "Machine Learning", "TensorFlow", "Data Preprocessing", "Reinforcement Learning"]
+    "ai": ["Neural Networks", "Machine Learning", "TensorFlow", "Data Preprocessing", "Reinforcement Learning"]
 }
 
 def generate_question(role, difficulty):

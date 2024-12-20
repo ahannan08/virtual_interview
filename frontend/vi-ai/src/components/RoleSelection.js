@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/role.css'; // Import CSS file
 
 const RoleSelection = ({ selectedRole, setSelectedRole, onNext }) => {
-  const roles = ["frontend", "backend", "AI engineer", "Full stack"];
+  const roles = ["frontend", "backend", "ai", "fullstack"];
 
   return (
     <div className="selection mb-6">

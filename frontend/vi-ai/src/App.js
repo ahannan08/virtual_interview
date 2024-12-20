@@ -4,9 +4,14 @@ import LevelSelection from './components/LevelSelection';
 import RoleSelection from './components/RoleSelection';
 import Question from './components/Question';
 import Feedback from './components/Feedback';
+import LoadingSpinner from './components/LoadingSpinner';
+import { 
+  handleSessionStart, 
+  handleSubmitAnswer, 
+  handleNextQuestion 
+} from './components/sessionHandlers';
 
 const App = () => {
-  // Previous state declarations remain the same...
   const [currentStep, setCurrentStep] = useState('role');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState('');
@@ -27,12 +32,8 @@ const App = () => {
   const [feedback, setFeedback] = useState(null);
   const [score, setScore] = useState(0);
   const [maxQuestions, setMaxQuestions] = useState(0);
-  const [isListening, setIsListening] = useState(false);
 
-  // Remove showQuestionLoading state as it's now handled in the Question component
-
-  // Previous handlers remain the same...
-  const handleRoleNext = async () => {
+  const handleRoleNext = () => {
     if (selectedRole) {
       setCurrentStep('level');
     } else {
@@ -43,7 +44,7 @@ const App = () => {
   const handleLevelNext = async () => {
     if (selectedLevel) {
       setIsLoading(true);
-      await handleSessionStart();
+      await handleSessionStart(startSession, selectedRole, selectedLevel);
       setCurrentStep('quiz');
       setIsLoading(false);
     } else {
@@ -69,57 +70,6 @@ const App = () => {
     }
   }, [selectedLevel]);
 
-  const handleSessionStart = async () => {
-    if (selectedRole && selectedLevel) {
-      await startSession(selectedRole, selectedLevel);
-    }
-  };
-
-  const handleSubmitAnswer = async () => {
-    if (!userResponse.trim()) {
-      alert('Please provide an answer before submitting.');
-      return;
-    }
-    
-    const response = await submitAnswer(currentQuestionIndex + 1, userResponse);
-    setFeedback(response.feedback);
-    setScore(response.score);
-  };
-
-  const handleNextQuestion = async () => {
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    setUserResponse('');
-    setFeedback(null);
-
-    if (currentQuestionIndex + 1 >= maxQuestions) {
-      setShowFeedback(true);
-      endSession();
-    } else {
-      const nextQuestion = await fetchNextQuestion();
-      setQuestion(nextQuestion);
-    }
-  };
-
-  // Speech recognition handler remains the same...
-  const startSpeechRecognition = () => {
-    if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-
-      recognition.start();
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onresult = (event) => {
-        const speechToText = event.results[0][0].transcript;
-        setUserResponse(speechToText);
-      };
-    } else {
-      alert('Speech recognition is not supported in your browser.');
-    }
-  };
-
   useEffect(() => {
     if (sessionId && !sessionEnded) {
       const fetchFirstQuestion = async () => {
@@ -129,12 +79,6 @@ const App = () => {
       fetchFirstQuestion();
     }
   }, [sessionId, sessionEnded]);
-
-  const LoadingSpinner = () => (
-    <div className="flex justify-center items-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-    </div>
-  );
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
@@ -173,13 +117,21 @@ const App = () => {
               setUserResponse={setUserResponse}
               feedback={feedback}
               score={score}
-              onSubmit={handleSubmitAnswer}
-              onNext={handleNextQuestion}
+              onSubmit={() => handleSubmitAnswer(userResponse, submitAnswer, currentQuestionIndex, setFeedback, setScore)}
+              onNext={() => handleNextQuestion(
+                currentQuestionIndex,
+                setCurrentQuestionIndex,
+                setUserResponse,
+                setFeedback,
+                fetchNextQuestion,
+                maxQuestions,
+                setShowFeedback,
+                endSession,
+                setQuestion
+              )}
               currentQuestionIndex={currentQuestionIndex}
               maxQuestions={maxQuestions}
               sessionEnded={sessionEnded}
-              startSpeechRecognition={startSpeechRecognition}
-              isListening={isListening}
             />
           )}
 
